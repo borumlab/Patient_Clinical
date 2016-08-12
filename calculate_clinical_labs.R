@@ -341,7 +341,7 @@ calculate_clinical_labs <- function() {
     clinical <- clinical[order(clinical$DATE),]
     
     for (i in unique(clinical$variable)[!grepl("_FLAG",unique(clinical$variable))]) {
-      print(i)
+      
       if (i=="AMMONIA_BLOOD" || i=="ACAC_BLOOD") {
         clinical[clinical$variable==i,colnames(clinical)=="value"] <- labs[,colnames(labs)==i]
       }
@@ -354,7 +354,7 @@ calculate_clinical_labs <- function() {
         test.upper <- temp[,colnames(temp) %in% c("DATE","TIME","AGE",gsub(" ","",paste(i,"_UL")))]
         test.lower[,4] <- as.numeric(test.lower[,4])
         test.upper[,4] <- as.numeric(test.upper[,4])
-        clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE, 
+        clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE & clinical$TIME %in% compare$TIME, 
                  colnames(clinical)=="value"] <- ifelse(!is.na(compare[,4]) & compare[,4] >= test.lower[,4] & 
                                                           compare[,4] <= test.upper[,4],"WNL","no")
         if (length(clinical[!is.na(clinical$value) & clinical$value=="no",colnames(clinical)=="value"])>0) {
@@ -467,7 +467,7 @@ calculate_clinical_labs <- function() {
           test.upper <- temp[temp$AGE>=9125,colnames(temp) %in% c("DATE","TIME","AGE",gsub(" ","",paste(i,"_L")))]
           test.lower[,4] <- as.numeric(test.lower[,4])
           test.upper[,4] <- as.numeric(test.upper[,4])
-          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE, 
+          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE & clinical$TIME %in% compare$TIME, 
                    colnames(clinical)=="value"] <- ifelse(!is.na(compare[,4]) & compare[,4] >= test.lower[,4] & 
                                                             compare[,4] < test.upper[,4],"WNL","no")
         }
@@ -622,7 +622,7 @@ calculate_clinical_labs <- function() {
         test.upper <- temp[,colnames(temp) %in% c("DATE","TIME","AGE",gsub(" ","",paste(i,"_UL")))]
         test.upper[,4] <- as.numeric(test.upper[,4])
         if (dim(test.upper)[1]>0) {
-          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE,
+          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE & clinical$TIME %in% compare$TIME,
                    colnames(clinical)=="value"] <- ifelse(!is.na(compare[,4]) & compare[,4] <= test.upper[,4],"WNL","no")
         }
         if (length(clinical[!is.na(clinical$value) & clinical$value=="no",colnames(clinical)=="value"])>0) {
@@ -656,7 +656,6 @@ calculate_clinical_labs <- function() {
         }
       }
       
-      ##
       else if (i=="GLUS_BLOOD" || i=="GLUS_BLOOD_CRC") {
         clinical[clinical$variable==i,colnames(clinical)=="value"] <- labs[,colnames(labs)==i]
         compare <- clinical[clinical$variable==i & clinical$AGE<210,
@@ -702,11 +701,10 @@ calculate_clinical_labs <- function() {
           test.upper <- temp[temp$AGE>=210,colnames(temp) %in% c("DATE","TIME","AGE",gsub(" ","",paste(i,"_UL")))]
           test.lower[,4] <- as.numeric(test.lower[,4])
           test.upper[,4] <- as.numeric(test.upper[,4])
-          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE,
+          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE & clinical$TIME %in% compare$TIME,
                    colnames(clinical)=="value"] <- ifelse(!is.na(compare[,4]) & compare[,4] >= test.lower[,4] &
                                                             compare[,4] <= test.upper[,4],"WNL","no")
         }
-        print(i)
         if (length(clinical[clinical$AGE>=210,colnames(clinical)=="value"])>0) {
           test.lower <- temp[which(temp$DATE %in% clinical[clinical$value=="no",c("DATE")] & 
                                      temp$TIME %in% clinical[clinical$value=="no",c("TIME")]),
@@ -720,11 +718,10 @@ calculate_clinical_labs <- function() {
           compare[,4] <- as.numeric(compare[,4])
           test.lower[,4] <- as.numeric(test.lower[,4])
           test.upper[,4] <- as.numeric(test.upper[,4])
-          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE,
+          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE & clinical$TIME %in% compare$TIME,
                    colnames(clinical)=="value"] <- ifelse(!is.na(compare[,4]) & compare[,4] > test.lower[,4] &
                                                             compare[,4] <= test.upper[,4],"BH","no")
         }
-        print(i)
         if (length(clinical[clinical$AGE>=210,colnames(clinical)=="value"])>0) {
           test.lower <- temp[which(temp$DATE %in% clinical[clinical$value=="no",c("DATE")] & 
                                      temp$TIME %in% clinical[clinical$value=="no",c("TIME")]),
@@ -734,10 +731,9 @@ calculate_clinical_labs <- function() {
                               colnames(clinical) %in% c("DATE","TIME","AGE","value")]
           compare[,4] <- as.numeric(compare[,4])
           test.lower[,4] <- as.numeric(test.lower[,4])
-          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE,
+          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE & clinical$TIME %in% compare$TIME,
                    colnames(clinical)=="value"] <- ifelse(!is.na(compare[,4]) & compare[,4] > test.lower[,4],"H","no")
         }
-        print(i)
         if (length(clinical[clinical$AGE>=210,colnames(clinical)=="value"])>0) {
           test.upper <- temp[which(temp$DATE %in% clinical[clinical$value=="no",c("DATE")] & 
                                      temp$TIME %in% clinical[clinical$value=="no",c("TIME")]),
@@ -747,7 +743,7 @@ calculate_clinical_labs <- function() {
                               colnames(clinical) %in% c("DATE","TIME","AGE","value")]
           compare[,4] <- as.numeric(compare[,4])
           test.upper[,4] <- as.numeric(test.upper[,4])
-          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE,
+          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE & clinical$TIME %in% compare$TIME,
                    colnames(clinical)=="value"] <- ifelse(!is.na(compare[,4]) & compare[,4] < test.upper[,4],"L",NA)
         }
       }
@@ -798,15 +794,15 @@ calculate_clinical_labs <- function() {
     for (i in colnames(clinical)[grepl("_BLOOD",colnames(clinical))]) {
       clinical[,colnames(clinical)==i] <- as.numeric(clinical[,colnames(clinical)==i])
     }
-    clinical <- clinical[,!(colnames(clinical)%in%c("AGE","TIME"))]
+    clinical <- clinical[,!(colnames(clinical)%in%c("AGE"))]
     xlsx <- "CLINICAL_LABS_CLINICAL.xlsx"
     xlsx <- gsub(" ","",paste(patient,"_",xlsx))
     xlsx::write.xlsx2(clinical,file=xlsx,showNA=FALSE,row.names=FALSE)
     print(paste(xlsx,"created and saved in the patient's folder"))
     
-    return(1)
     colnames(clinical)[colnames(clinical)=="GLUS_BLOOD_CRC"] <- "GLUS_BLOOD_CRC_MMOL"
-    colnames(clinical)[colnames(clinical)=="GLUS_FLAG_CRC"] <- "GLUS_FLAG_CRC_MMOL"
+    colnames(clinical)[colnames(clinical)=="GLUS_BLOOD"] <- "GLUS_BLOOD_MMOL"
+    colnames(clinical)[colnames(clinical)=="BHB_BLOOD"] <- "BHB_BLOOD_MMOL"
     
     # Delete any previously existing connections creating using the RMySQL package
     # (If too many are running at once, the script will not be able to establish a new connection)
@@ -827,10 +823,8 @@ calculate_clinical_labs <- function() {
     
     dbSendQuery(connect,paste("USE",d))
     
-    clinical$BHB_BLOOD <- labs$BHB_BLOOD_MMOL
+    clinical$BHB_BLOOD_MMOL <- labs$BHB_BLOOD_MMOL
     clinical$GLUS_BLOOD_CRC_MMOL <- (clinical$GLUS_BLOOD_CRC_MMOL/180.1559)*10
-    clinical <- cbind.data.frame(clinical,labs$COMMENTS)
-    colnames(clinical)[dim(clinical)[2]] <- "COMMENTS"
     
     mrnumber <- unique(clinical$MRNUMBER)
     table <- "clinical_labs_id_research"
