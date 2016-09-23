@@ -823,6 +823,7 @@ calculate_clinical_labs <- function() {
     
     dbSendQuery(connect,paste("USE",d))
     
+    clinical$GLUS_BLOOD_MMOL <- (clinical$GLUS_BLOOD_MMOL/180.1559)*10
     clinical$BHB_BLOOD_MMOL <- labs$BHB_BLOOD_MMOL
     clinical$GLUS_BLOOD_CRC_MMOL <- (clinical$GLUS_BLOOD_CRC_MMOL/180.1559)*10
     
