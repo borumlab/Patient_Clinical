@@ -414,7 +414,7 @@ calculate_clinical_labs <- function() {
                               colnames(clinical) %in% c("DATE","TIME","AGE","value")]
           compare[,4] <- as.numeric(compare[,4])
           test.lower[,4] <- as.numeric(test.lower[,4])
-          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$value=="no", 
+          clinical[clinical$variable==gsub("_BLOOD","_FLAG",i) & clinical$DATE %in% compare$DATE & clinical$value=="no", 
                    colnames(clinical)=="value"] <- ifelse(!is.na(compare[,4]) & compare[,4] >= test.lower[,4],"VH",NA)
         }
       }
